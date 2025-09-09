@@ -15,12 +15,9 @@ export const useAuth = () => {
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Auto-redirect to dashboard on successful auth
-        if (event === 'SIGNED_IN' && session) {
-          // Use a small delay to ensure state is updated
-          setTimeout(() => {
-            window.location.href = '/dashboard';
-          }, 100);
+        // Only redirect on sign in, not on session refresh or other events
+        if (event === 'SIGNED_IN' && session && window.location.pathname !== '/dashboard') {
+          window.location.href = '/dashboard';
         }
       }
     );
