@@ -11,7 +11,7 @@ import {
 import healthcareLogo from '@/assets/healthcare-logo.png';
 
 // ElevenLabs ConvAI Widget Component
-const ElevenLabsWidget = ({ className }: { className?: string }) => {
+const ElevenLabsWidget = () => {
   useEffect(() => {
     // Load ElevenLabs ConvAI script if not already loaded
     if (!document.querySelector('script[src*="convai-widget-embed"]')) {
@@ -24,7 +24,7 @@ const ElevenLabsWidget = ({ className }: { className?: string }) => {
   }, []);
 
   return (
-    <div className={`w-full max-w-4xl mx-auto ${className || ''}`}>
+    <div className="w-full max-w-4xl mx-auto">
       <div 
         dangerouslySetInnerHTML={{
           __html: '<elevenlabs-convai agent-id="agent_5401k4qpbne0fapsw48w8xsvhfpy"></elevenlabs-convai>'
@@ -111,9 +111,40 @@ const Dashboard = () => {
 
       {/* Main Content - Centered ElevenLabs Widget */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-4rem)]">
-        <div className="w-full max-w-4xl mx-auto flex items-center justify-center">
-          {/* ElevenLabs Widget - Perfectly Centered */}
-          <ElevenLabsWidget className="w-full" />
+        <div className="w-full max-w-6xl">
+          {/* Welcome Section */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              Welcome to VitalVoice
+            </h2>
+            <p className="text-lg sm:text-xl text-muted-foreground mb-2">
+              Your AI Healthcare Assistant
+            </p>
+            <p className="text-sm sm:text-base text-primary font-medium">
+              Speak naturally about your health concerns. Click the microphone below to start.
+            </p>
+          </div>
+
+          {/* ElevenLabs Widget */}
+          <ElevenLabsWidget />
+
+          {/* Instructions */}
+          <div className="text-center mt-8 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+              <div className="p-4 bg-gradient-to-br from-primary/5 to-card rounded-xl border border-primary/10">
+                <h4 className="font-semibold text-primary mb-2">Privacy First</h4>
+                <p className="text-sm text-muted-foreground">No data stored. Complete confidentiality.</p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-accent/5 to-card rounded-xl border border-accent/10">
+                <h4 className="font-semibold text-accent mb-2">24/7 Available</h4>
+                <p className="text-sm text-muted-foreground">Get health guidance anytime.</p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-destructive/5 to-card rounded-xl border border-destructive/10">
+                <h4 className="font-semibold text-destructive mb-2">Emergency Notice</h4>
+                <p className="text-sm text-muted-foreground">For emergencies, call 911 immediately.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
