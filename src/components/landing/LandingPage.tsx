@@ -29,12 +29,6 @@ export const LandingPage = () => {
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
                 Features
               </a>
-              <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-                How It Works
-              </a>
-              <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
-                About
-              </a>
               <Link to="/auth">
                 <Button className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90">
                   Get Started
@@ -64,20 +58,6 @@ export const LandingPage = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Features
-                </a>
-                <a 
-                  href="#how-it-works" 
-                  className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  How It Works
-                </a>
-                <a 
-                  href="#about" 
-                  className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  About
                 </a>
                 <div className="px-3 py-2">
                   <Link to="/auth">
