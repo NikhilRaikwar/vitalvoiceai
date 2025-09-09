@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Heart, Menu, X } from 'lucide-react';
+import { Heart, Menu, X, Shield, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HeroSection } from './HeroSection';
 import { FeaturesSection } from './FeaturesSection';
 import { useState } from 'react';
+import healthcareLogo from '@/assets/healthcare-logo.png';
 
 export const LandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,9 +16,11 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img 
+                src={healthcareLogo} 
+                alt="VitalVoice Healthcare Logo"
+                className="w-8 h-8 rounded-lg"
+              />
               <span className="text-xl font-bold text-foreground">VitalVoice</span>
             </div>
             
@@ -102,10 +105,37 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-center justify-center mb-8">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img 
+                src={healthcareLogo} 
+                alt="VitalVoice Healthcare Logo"
+                className="w-8 h-8 rounded-lg"
+              />
               <span className="text-xl font-bold text-foreground">VitalVoice</span>
+            </div>
+          </div>
+          
+          {/* Legal & Safety Disclaimers */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="text-center p-6 bg-gradient-to-br from-destructive/5 to-card border border-destructive/20 rounded-xl">
+              <div className="flex items-center justify-center mb-3">
+                <AlertTriangle className="w-6 h-6 text-destructive mr-2" />
+                <h4 className="font-semibold text-destructive">Emergency Notice</h4>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                For life-threatening emergencies, <strong>call 911 immediately</strong>. 
+                VitalVoice is not a substitute for emergency medical services.
+              </p>
+            </div>
+            
+            <div className="text-center p-6 bg-gradient-to-br from-primary/5 to-card border border-primary/20 rounded-xl">
+              <div className="flex items-center justify-center mb-3">
+                <Shield className="w-6 h-6 text-primary mr-2" />
+                <h4 className="font-semibold text-primary">Privacy & Data</h4>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                <strong>No conversation data is stored.</strong> Your health information 
+                remains completely private and confidential.
+              </p>
             </div>
           </div>
           

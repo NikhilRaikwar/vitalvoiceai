@@ -14,6 +14,14 @@ export const useAuth = () => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Auto-redirect to dashboard on successful auth
+        if (event === 'SIGNED_IN' && session) {
+          // Use a small delay to ensure state is updated
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 100);
+        }
       }
     );
 

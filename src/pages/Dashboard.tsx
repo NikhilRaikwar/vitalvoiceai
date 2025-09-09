@@ -4,46 +4,50 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
-  Heart, 
-  Mic, 
   User, 
   LogOut, 
   Settings, 
   MessageCircle,
   Activity,
-  Shield
+  Shield,
+  HelpCircle,
+  Mic,
+  Volume2,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
+import { VoiceInterface } from '@/components/dashboard/VoiceInterface';
+import { ChatBubble } from '@/components/ui/chat-bubble';
+import { StatusBadge } from '@/components/ui/status-badge';
+import { SessionTimeline } from '@/components/dashboard/SessionTimeline';
+import healthcareLogo from '@/assets/healthcare-logo.png';
 
-// ElevenLabs ConvAI Widget Component
-const VoiceAssistantWidget = () => {
-  useEffect(() => {
-    // Load ElevenLabs ConvAI script if not already loaded
-    if (!document.querySelector('script[src*="convai-widget-embed"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
-      script.async = true;
-      script.type = 'text/javascript';
-      document.head.appendChild(script);
-    }
-  }, []);
-
-  return (
-    <div className="w-full min-h-[400px] bg-muted/10 rounded-lg border border-border/20 flex items-center justify-center">
-      <div 
-        dangerouslySetInnerHTML={{
-          __html: '<elevenlabs-convai agent-id="agent_5401k4qpbne0fapsw48w8xsvhfpy"></elevenlabs-convai>'
-        }}
-      />
-    </div>
-  );
-};
+interface ChatMessage {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: string;
+}
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activeMode, setActiveMode] = useState<'health-check' | 'ask-question' | 'emergency'>('ask-question');
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [sessionItems, setSessionItems] = useState([
+    {
+      id: '1',
+      type: 'system' as const,
+      content: 'Session started - VitalVoice AI Healthcare Assistant ready',
+      timestamp: new Date().toLocaleTimeString()
+    }
+  ]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -68,6 +72,30 @@ const Dashboard = () => {
     }
   };
 
+  const handleStartConversation = () => {
+    setIsVoiceActive(true);
+    toast({
+      title: "Voice Assistant Active",
+      description: "Start speaking about your health concerns.",
+    });
+  };
+
+  const handleEndConversation = () => {
+    setIsVoiceActive(false);
+    setIsSpeaking(false);
+    toast({
+      title: "Conversation Ended",
+      description: "Voice assistant has been deactivated.",
+    });
+  };
+
+  const handleFeedback = (helpful: boolean) => {
+    toast({
+      title: "Feedback Received",
+      description: `Thank you for your ${helpful ? 'positive' : 'constructive'} feedback!`,
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/30">
@@ -87,9 +115,11 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img 
+                src={healthcareLogo} 
+                alt="VitalVoice Healthcare Logo"
+                className="w-8 h-8 rounded-lg"
+              />
               <div>
                 <h1 className="text-xl font-bold text-foreground">VitalVoice</h1>
                 <p className="text-xs text-muted-foreground">Healthcare Assistant</p>
@@ -114,68 +144,117 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Voice Assistant Section */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Chat Interface - Main Area */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Mode Selection */}
+            <Card className="border-0 shadow-soft bg-gradient-to-r from-card to-muted/20">
+              <CardContent className="p-6">
+                <Tabs value={activeMode} onValueChange={(value) => setActiveMode(value as any)}>
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="health-check" className="flex items-center gap-2">
+                      <Activity className="w-4 h-4" />
+                      Health Check
+                    </TabsTrigger>
+                    <TabsTrigger value="ask-question" className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      Ask Question
+                    </TabsTrigger>
+                    <TabsTrigger value="emergency" className="flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      Emergency Info
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            {/* Voice Interface */}
+            <VoiceInterface
+              onStartConversation={handleStartConversation}
+              onEndConversation={handleEndConversation}
+              isActive={isVoiceActive}
+              isSpeaking={isSpeaking}
+            />
+
+            {/* Chat Area */}
             <Card className="border-0 shadow-strong bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
               <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
-                    <Mic className="w-5 h-5 text-primary" />
-                  </div>
+                <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl">AI Voice Assistant</CardTitle>
+                    <CardTitle className="text-2xl">Conversation</CardTitle>
                     <CardDescription>
-                      Speak with your healthcare assistant about any health concerns
+                      Your healthcare conversation with VitalVoice AI
                     </CardDescription>
                   </div>
+                  {activeMode === 'health-check' && (
+                    <StatusBadge status="self-care" />
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="bg-muted/30 rounded-xl p-6 border border-border/50">
-                    <VoiceAssistantWidget />
+                <ScrollArea className="h-[400px] pr-4">
+                  <div className="space-y-4">
+                    {chatMessages.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <Mic className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <h3 className="text-lg font-semibold mb-2">Ready to help</h3>
+                        <p className="text-sm">
+                          {activeMode === 'health-check' && "Start by describing your symptoms or health concerns"}
+                          {activeMode === 'ask-question' && "Ask me anything about your health"}
+                          {activeMode === 'emergency' && "For emergencies, call 911. I can help with urgent care guidance."}
+                        </p>
+                      </div>
+                    ) : (
+                      chatMessages.map((message) => (
+                        <ChatBubble
+                          key={message.id}
+                          message={message.content}
+                          isUser={message.isUser}
+                          timestamp={message.timestamp}
+                          onFeedback={!message.isUser ? handleFeedback : undefined}
+                          showFeedback={!message.isUser}
+                        />
+                      ))
+                    )}
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <Card className="bg-primary/5 border-primary/20">
-                      <CardContent className="p-4 text-center">
-                        <MessageCircle className="w-8 h-8 text-primary mx-auto mb-2" />
-                        <p className="text-sm font-medium">Natural Conversation</p>
-                        <p className="text-xs text-muted-foreground">Speak naturally about your health</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className="bg-accent/5 border-accent/20">
-                      <CardContent className="p-4 text-center">
-                        <Activity className="w-8 h-8 text-accent mx-auto mb-2" />
-                        <p className="text-sm font-medium">Symptom Assessment</p>
-                        <p className="text-xs text-muted-foreground">Get intelligent health guidance</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Stats */}
+            {/* Session Timeline */}
+            <SessionTimeline items={sessionItems} />
+
+            {/* Quick Actions */}
             <Card className="border-0 shadow-soft bg-gradient-to-br from-card to-muted/20">
               <CardHeader>
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant={activeMode === 'health-check' ? 'default' : 'outline'} 
+                  className="w-full justify-start"
+                  onClick={() => setActiveMode('health-check')}
+                >
                   <Activity className="w-4 h-4 mr-2" />
                   Health Check
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant={activeMode === 'ask-question' ? 'default' : 'outline'} 
+                  className="w-full justify-start"
+                  onClick={() => setActiveMode('ask-question')}
+                >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Ask Question
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant={activeMode === 'emergency' ? 'default' : 'outline'} 
+                  className="w-full justify-start"
+                  onClick={() => setActiveMode('emergency')}
+                >
                   <Shield className="w-4 h-4 mr-2" />
                   Emergency Info
                 </Button>
@@ -183,23 +262,41 @@ const Dashboard = () => {
             </Card>
 
             {/* Health Tips */}
-            <Card className="border-0 shadow-soft bg-gradient-to-br from-accent/5 to-card">
+            <Card className="border-0 shadow-soft bg-gradient-to-br from-accent/5 to-card border-accent/20">
               <CardHeader>
-                <CardTitle className="text-lg">Health Tip</CardTitle>
+                <CardTitle className="text-lg text-accent">Health Tip</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Remember to describe your symptoms clearly, including when they started, 
+                  Describe symptoms clearly, including when they started, 
                   their severity, and any factors that make them better or worse.
                 </p>
               </CardContent>
             </Card>
 
-            {/* Safety Notice */}
+            {/* Help Widget */}
             <Card className="border-0 shadow-soft bg-gradient-to-br from-primary/5 to-card border-primary/20">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
-                  <Shield className="w-5 h-5 mr-2 text-primary" />
+                  <HelpCircle className="w-5 h-5 mr-2 text-primary" />
+                  Need Help?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Having trouble? Check our FAQ or get assistance.
+                </p>
+                <Button variant="outline" size="sm" className="w-full">
+                  View FAQ
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Safety Notice */}
+            <Card className="border-0 shadow-soft bg-gradient-to-br from-destructive/5 to-card border-destructive/20">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center">
+                  <Shield className="w-5 h-5 mr-2 text-destructive" />
                   Important Notice
                 </CardTitle>
               </CardHeader>

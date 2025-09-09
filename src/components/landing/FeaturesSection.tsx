@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { 
   Stethoscope, 
   MessageCircle, 
@@ -7,39 +8,72 @@ import {
   Phone, 
   Brain,
   Heart,
-  CheckCircle 
+  CheckCircle,
+  Shield,
+  Zap,
+  Lock,
+  Activity
 } from 'lucide-react';
 
 const features = [
   {
     icon: Stethoscope,
     title: 'Symptom Assessment',
-    description: 'Intelligent symptom evaluation through voice conversation with appropriate care level recommendations.'
+    description: 'Triage in seconds, not hours.',
+    detail: 'Intelligent evaluation through voice conversation with appropriate care recommendations.'
   },
   {
     icon: MessageCircle,
     title: 'Natural Conversation',
-    description: 'Speak naturally about your health concerns. No forms to fill out or complex interfaces to navigate.'
+    description: 'Just speak your concerns.',
+    detail: 'No forms to fill out or complex interfaces to navigate.'
   },
   {
     icon: Clock,
     title: '24/7 Availability',
-    description: 'Get health guidance whenever you need it, day or night, without scheduling appointments.'
+    description: 'Healthcare guidance anytime.',
+    detail: 'Get help whenever you need it, day or night, without scheduling appointments.'
   },
   {
     icon: Users,
     title: 'Care Coordination',
-    description: 'Receive guidance on the right healthcare setting and what to prepare for your visit.'
+    description: 'Know where to go next.',
+    detail: 'Receive guidance on the right healthcare setting and what to prepare for your visit.'
   },
   {
     icon: Phone,
     title: 'Emergency Ready',
-    description: 'Immediate escalation to emergency services when critical symptoms are detected.'
+    description: 'Instant escalation when critical.',
+    detail: 'Immediate escalation to emergency services when critical symptoms are detected.'
   },
   {
     icon: Brain,
     title: 'AI-Powered Intelligence',
-    description: 'Advanced AI trained on medical knowledge to provide accurate health information and guidance.'
+    description: 'Medical-grade accuracy.',
+    detail: 'Advanced AI trained on medical knowledge to provide accurate health information.'
+  }
+];
+
+const whyUseVitalVoice = [
+  {
+    icon: Lock,
+    title: 'Privacy',
+    description: 'No data stored, complete confidentiality'
+  },
+  {
+    icon: Zap,
+    title: 'Speed',
+    description: 'Instant responses, immediate guidance'
+  },
+  {
+    icon: Stethoscope,
+    title: 'Medical Accuracy',
+    description: 'Trained on medical knowledge and protocols'
+  },
+  {
+    icon: Activity,
+    title: 'Accessibility',
+    description: 'Voice-first interface, available to everyone'
   }
 ];
 
@@ -47,6 +81,29 @@ export const FeaturesSection = () => {
   return (
     <section className="py-24 bg-gradient-to-b from-background to-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Why Use VitalVoice Section */}
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Why use VitalVoice?
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
+            Experience the future of healthcare guidance with AI-powered voice assistance
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {whyUseVitalVoice.map((benefit, index) => (
+              <div key={index} className="text-center p-6 rounded-2xl bg-gradient-to-br from-card to-muted/20 border border-border/50">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <benefit.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{benefit.title}</h3>
+                <p className="text-sm text-muted-foreground">{benefit.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Features Section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Comprehensive Healthcare Assistance
@@ -61,18 +118,21 @@ export const FeaturesSection = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className="border-0 shadow-soft hover:shadow-medium transition-all duration-300 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm"
+              className="border-0 shadow-soft hover:shadow-medium transition-all duration-300 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm group"
             >
               <CardHeader>
-                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 <CardTitle className="text-xl text-foreground">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-muted-foreground leading-relaxed">
+                <CardDescription className="text-primary font-semibold">
                   {feature.description}
                 </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.detail}
+                </p>
               </CardContent>
             </Card>
           ))}
